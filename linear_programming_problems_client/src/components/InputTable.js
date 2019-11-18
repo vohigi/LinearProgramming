@@ -94,7 +94,7 @@ const InputTable = ({supplyCount, demandCount}) => {
     };
     return (
         <>
-            <table>
+            <table >
                 <tbody>
                 <tr>{createRow(supplyCount, null, supplies, 'supplies')}</tr>
                 </tbody>
@@ -105,15 +105,20 @@ const InputTable = ({supplyCount, demandCount}) => {
                 </tbody>
             </table>
             <hr/>
-            <table>
+            <strong style={{"position":"relative","top":"50px"}}>Склади</strong>
+            <table style={{"display":"inline"}}>
+                <thead>
+                    <tr><td colSpan={demandCount} style={{"textAlign":"center"}}><strong>Споживачі</strong></td></tr>
+                </thead>
+
                 <tbody>
                 {createRow(supplyCount, demandCount, prices, 'prices')}
                 </tbody>
             </table>
-            <button onClick={handleSave}>Calculate</button>
-            {result.base_plan&&<p>Base Plan:</p>}
+            <button style={{"display":"block"}} onClick={handleSave}>Порахувати</button>
+            {result.base_plan&&<p>Опорний план:</p>}
             {result.base_plan&&<Result array={result.base_plan} value={result.base_cost}/>}
-            {result.optimized_plan&&<p>Optimized Plan:</p>}
+            {result.optimized_plan&&<p>Оптимізований план:</p>}
             {result.optimized_plan&&<Result array={result.optimized_plan} value={result.optimized_cost}/>}
         </>
     );

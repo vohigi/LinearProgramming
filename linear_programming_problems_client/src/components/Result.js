@@ -20,7 +20,7 @@ const Result = ({array,value}) => {
                 {createRow(array)}
                 </tbody>
             </table>
-            <p>Cost: {value}</p>
+            <p>Вартість: {value}</p>
         </div>
     );
 };
