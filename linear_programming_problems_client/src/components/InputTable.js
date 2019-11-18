@@ -3,11 +3,13 @@ import uuid from 'react-uuid';
 import PropTypes from 'prop-types';
 import Input from './Input';
 import axios from 'axios';
+import Result from "./Result";
 
 const InputTable = ({supplyCount, demandCount}) => {
     const [supplies, setSupplies] = useState([]);
     const [demands, setDemands] = useState([]);
     const [prices, setPrices] = useState([[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]);
+    const [result, setResult] = useState({});
     useEffect(() => {
         if(prices.length!==supplyCount||prices[0].length!==demandCount) {
             const res = [];
@@ -87,6 +89,7 @@ const InputTable = ({supplyCount, demandCount}) => {
             .then(res => {
                 console.log(res);
                 console.log(res.data);
+                setResult(res.data);
             }).catch(err=>console.log(err))
     };
     return (
@@ -108,6 +111,10 @@ const InputTable = ({supplyCount, demandCount}) => {
                 </tbody>
             </table>
             <button onClick={handleSave}>Calculate</button>
+            {result.base_plan&&<p>Base Plan:</p>}
+            {result.base_plan&&<Result array={result.base_plan} value={result.base_cost}/>}
+            {result.optimized_plan&&<p>Optimized Plan:</p>}
+            {result.optimized_plan&&<Result array={result.optimized_plan} value={result.optimized_cost}/>}
         </>
     );
 };
