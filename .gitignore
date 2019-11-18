@@ -1,0 +1,6 @@
+bin/
+obj/
+/packages/
+.idea/
+linear_programming_problems_client/.idea/
+linear_programming_problems_client/node_modules/
