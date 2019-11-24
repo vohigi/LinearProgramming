@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using LinearProgrammingProblems.Models;
 using LinearProgrammingProblems.Services;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace LinearProgrammingProblems.Controllers
@@ -30,6 +31,31 @@ namespace LinearProgrammingProblems.Controllers
                 return Ok(json);
             }
             return UnprocessableEntity();
+        }
+        
+        
+        [HttpPost("api/assignment")]
+        public IActionResult Post([FromBody]AssignmentProblem assignmentProblem)  
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    AssignmentProblemService assignmentProblemService = new AssignmentProblemService();
+                    var result = assignmentProblemService.FindAssignments(assignmentProblem.Values);
+                    var json = JsonConvert.SerializeObject(result);
+                    return Ok(json);
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception.Message);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
+            else
+            {
+                return UnprocessableEntity();
+            }
         }
     }
 }
