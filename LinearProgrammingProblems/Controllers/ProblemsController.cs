@@ -35,7 +35,7 @@ namespace LinearProgrammingProblems.Controllers
         
         
         [HttpPost("api/assignment")]
-        public IActionResult Post([FromBody]AssignmentProblem assignmentProblem)  
+        public IActionResult Post([FromBody]AssignmentProblem assignmentProblem)
         {
             if (ModelState.IsValid)
             {
@@ -52,10 +52,7 @@ namespace LinearProgrammingProblems.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError);
                 }
             }
-            else
-            {
-                return UnprocessableEntity();
-            }
+            return UnprocessableEntity();
         }
     }
 }

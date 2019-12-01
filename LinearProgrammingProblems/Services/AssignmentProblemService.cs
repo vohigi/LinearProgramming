@@ -362,7 +362,13 @@ namespace LinearProgrammingProblems.Services
                 }
             }
         }
-
+        /// <summary>
+        ///  Clear array of no basis elements
+        /// </summary>
+        /// <param name="masks"></param>
+        /// <param name="w">rows count</param>
+        /// <param name="h">cols count</param>
+        /// <exception cref="ArgumentNullException"></exception>
         private static void ClearPrimes(byte[,] masks, int w, int h)
         {
             if (masks == null)

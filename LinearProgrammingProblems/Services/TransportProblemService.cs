@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using LinearProgrammingProblems.Models;
 
 namespace LinearProgrammingProblems.Services
@@ -15,7 +13,10 @@ namespace LinearProgrammingProblems.Services
             _transportProblem = transportProblem;
             Calculated=new Shipment[_transportProblem.Supply.Length,_transportProblem.Demmand.Length];
         }
-
+        /// <summary>
+        ///     calculates base cost, base plan, optimized cost, optimized plan
+        /// </summary>
+        /// <returns>TransportProblemServiceResult</returns>
         public TransportProblemServiceResult Solve()
         {
             TransportProblemServiceResult transportProblemServiceResult = new TransportProblemServiceResult();
@@ -36,7 +37,11 @@ namespace LinearProgrammingProblems.Services
 
             return transportProblemServiceResult;
         }
-
+        /// <summary>
+        ///     calculates total transportation cost
+        /// </summary>
+        /// <param name="calculated">2d Shipment array</param>
+        /// <returns>double</returns>
         private double getTotalTransportationCost(Shipment[,] calculated)
         {
             double cost = 0;
@@ -53,6 +58,11 @@ namespace LinearProgrammingProblems.Services
             }
             return cost;
         }
+        /// <summary>
+        ///     converts  2d array of Shipment to 2d double array (saving transportation quantity)
+        /// </summary>
+        /// <param name="calculated">2d Shipment array</param>
+        /// <returns>double[,]</returns>
         private double[,] getResultArray(Shipment[,] calculated)
         {
             double[,] res = new double[_transportProblem.Supply.Length,_transportProblem.Demmand.Length];
@@ -74,6 +84,9 @@ namespace LinearProgrammingProblems.Services
 
             return res;
         }
+        /// <summary>
+        ///     calculates base plan using north-west corner algorithm
+        /// </summary>
         private void NorthWestCornerRule()
         {
 
@@ -97,6 +110,9 @@ namespace LinearProgrammingProblems.Services
                     }
                 }
         }
+        /// <summary>
+        ///     Performs base plan optimization using Vogels method
+        /// </summary>
         private void SteppingStone() {
         double maxReduction = 0;
         Shipment[] move = null;
@@ -150,9 +166,11 @@ namespace LinearProgrammingProblems.Services
             SteppingStone();
         }
     }
- 
+    /// <summary>
+    ///  flat matrix
+    /// </summary>
+    /// <returns>list of type Shipment</returns>
     private List<Shipment> matrixToList() {
-        //LinkedList<Shipment> res = new LinkedList<Shipment>();
         List<Shipment> res = new List<Shipment>();
         for (int i = 0; i < Calculated.GetLength(0); i++)
         {
@@ -166,15 +184,17 @@ namespace LinearProgrammingProblems.Services
         }
 
         return res;
-//        return stream(matrix)
-//                .flatMap(row -> stream(row))
-//                .filter(s -> s != null)
-//                .collect(toCollection(LinkedList::new));
     }
- 
+     /// <summary>
+     ///     returns plus minus cycle elements
+     /// </summary>
+     /// <param name="s">added to basis cell</param>
+     /// <returns>array of <Shipment></returns>
     private Shipment[] getClosedPath(Shipment s) {
         List<Shipment> path = matrixToList();
-//        LinkedList<Shipment> path = matrixToList();
+        
+        // remove (and keep removing) elements that do not have a
+        // vertical AND horizontal neighbor
         path.Insert(0,s);
         while (path.RemoveAll(sh =>
         {
@@ -182,28 +202,8 @@ namespace LinearProgrammingProblems.Services
             Console.WriteLine("ne");
             return (nbrs[0] == null) || (nbrs[1] == null);
         })>0);
-        // remove (and keep removing) elements that do not have a
-        // vertical AND horizontal neighbor
-//        for (LinkedListNode<Shipment> n2 = path.First; n2 != null; )
-//        {
-//            LinkedListNode<Shipment> temp = n2.Next;
-//            Shipment[] nbrs = getNeighbors(n2.Value, path);
-//            if (nbrs[0] == null || nbrs[1] == null)
-//                path.Remove(n2);
-//            n2 = temp;
-//        }
-//        var node = path.First;
-//        while (node != null)
-//        {
-//            var next = node.Next;
-//            Shipment[] nbrs = getNeighbors(node.Value, path);
-//            if (nbrs[0] == null || nbrs[1] == null)
-//                path.Remove(node);
-//            node = next;
-//        }
-
-        // place the remaining elements in the correct plus-minus order
         
+        // place the remaining elements in the correct plus-minus order
         Shipment[] stones = path.ToArray();
         Shipment prev = s;
         for (int i = 0; i < stones.Length; i++) {
@@ -212,22 +212,28 @@ namespace LinearProgrammingProblems.Services
         }
         return stones;
     }
- 
+    /// <summary>
+    ///     returns array of vertical and horizontal neighbours for the cell
+    /// </summary>
+    /// <param name="s">cell to get neighbours for</param>
+    /// <param name="lst">list of all cells</param>
+    /// <returns>array of type Shipment with size 2</returns>
     private Shipment[] getNeighbors(Shipment s, List<Shipment> lst) {
         Shipment[] nbrs = new Shipment[2];
         foreach (var o in lst) {
-            if (o != s) {
-                if (o.R == s.R && nbrs[0] == null)
-                    nbrs[0] = o;
-                else if (o.C == s.C && nbrs[1] == null)
-                    nbrs[1] = o;
-                if (nbrs[0] != null && nbrs[1] != null)
-                    break;
-            }
+            if (o == s) continue;
+            if (o.R == s.R && nbrs[0] == null)
+                nbrs[0] = o;
+            else if (o.C == s.C && nbrs[1] == null)
+                nbrs[1] = o;
+            if (nbrs[0] != null && nbrs[1] != null)
+                break;
         }
         return nbrs;
     }
- 
+    /// <summary>
+    ///     fix degenerate case by adding dummy values
+    /// </summary>
     private void fixDegenerateCase() {
         double eps = 4.9E-324;
  
